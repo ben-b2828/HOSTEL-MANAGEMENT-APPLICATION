@@ -269,3 +269,8 @@ class HostelApp:
 
         tk.Button(remove_win, text="Remove", command=confirm_removal,
                   bg="silver", fg="red").pack(pady=10)
+if __name__ == "__main__":
+    initialize_db()
+    root = tk.Tk()
+    app = HostelApp(root)
+    root.mainloop()

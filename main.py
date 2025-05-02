@@ -73,3 +73,20 @@ class HostelApp:
                   bg="grey", fg="black").pack(pady=12)
         tk.Button(self.root, text="Exit", command=self.root.quit,
                   bg="red", fg="black").pack(pady=12)
+    def add_student(self):
+        add_win = tk.Toplevel(self.root)
+        add_win.title("Add Student")
+        add_win.geometry("300x250")
+        add_win.configure(bg="silver")
+
+        tk.Label(add_win, text="Name:", bg="silver", fg="black").pack()
+        name_entry = tk.Entry(add_win)
+        name_entry.pack()
+
+        tk.Label(add_win, text="Age:", bg="silver", fg="black").pack()
+        age_entry = tk.Entry(add_win)
+        age_entry.pack()
+
+        tk.Label(add_win, text="Room Number:", bg="silver", fg="black").pack()
+        room_entry = tk.Entry(add_win)
+        room_entry.pack()

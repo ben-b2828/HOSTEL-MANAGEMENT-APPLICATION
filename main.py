@@ -90,3 +90,43 @@ class HostelApp:
         tk.Label(add_win, text="Room Number:", bg="silver", fg="black").pack()
         room_entry = tk.Entry(add_win)
         room_entry.pack()
+        def save_student():
+            name = name_entry.get()
+            age = age_entry.get()
+            room = room_entry.get()
+
+            if not name or not age or not room:
+                messagebox.showerror("Input Error", "All fields are required!")
+                return
+
+            try:
+                conn = connect_db()
+                cursor = conn.cursor()
+
+                cursor.execute("SELECT * FROM rooms WHERE room_number = ?", (room,))
+                existing_room = cursor.fetchone()
+                if existing_room:
+                    if existing_room[2] >= existing_room[1]:
+                        raise sqlite3.IntegrityError("Room is full")
+                    cursor.execute("UPDATE rooms SET occupied = occupied + 1 WHERE room_number = ?", (room,))
+                else:
+                    cursor.execute("INSERT INTO rooms (room_number, capacity, occupied) VALUES (?, ?, ?)",
+                                   (room, 1, 1))
+
+                cursor.execute("INSERT INTO students (name, age, room_number) VALUES (?, ?, ?)",
+                               (name, int(age), room))
+
+                conn.commit()
+                conn.close()
+                messagebox.showinfo("Success", "Student added successfully!")
+                add_win.destroy()
+            except sqlite3.IntegrityError as e:
+                messagebox.showerror("Error", f"{e}")
+            except ValueError:
+                messagebox.showerror("Error", "Invalid age input.")
+            except Exception as e:
+                logging.error(f"Add Student Error: {e}")
+                messagebox.showerror("Error", "An unexpected error occurred.")
+
+        tk.Button(add_win, text="Save", command=save_student,
+                  bg="silver", fg="black").pack(pady=10)

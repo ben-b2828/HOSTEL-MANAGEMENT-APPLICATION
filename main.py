@@ -4,7 +4,7 @@ from tkinter import messagebox, ttk
 import logging
 from datetime import datetime
 
-# Enable foreign keys in SQLite
+
 
 
 def connect_db():
@@ -15,3 +15,17 @@ def connect_db():
 # Logging setup
 logging.basicConfig(filename=".venv/Lib/error.log", level=logging.ERROR,
                     format="%(pastime)s - %(levelname)s - %(message)s")
+
+def initialize_db():
+    try:
+        conn = connect_db()
+        cursor = conn.cursor()
+
+
+        cursor.execute('''CREATE TABLE IF NOT EXISTS students (
+                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            name TEXT,
+                            age INTEGER,
+                            room_number TEXT UNIQUE,
+                            fees_paid REAL DEFAULT 0.0
+                        )''')

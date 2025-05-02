@@ -179,3 +179,39 @@ class HostelApp:
         tk.Label(pay_win, text="Payment Amount:", bg="silver", fg="blue").pack()
         amount_entry = tk.Entry(pay_win)
         amount_entry.pack()
+        def save_payment():
+            selected = student_combo.get()
+            amount = amount_entry.get()
+
+            if not selected or not amount:
+                messagebox.showerror("Input Error", "All fields are required.")
+                return
+
+            try:
+                student_id = int(selected.split(" - ")[0])
+                amount = float(amount)
+
+                conn = connect_db()
+                cursor = conn.cursor()
+
+                date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                cursor.execute("INSERT INTO payments (student_id, amount, date) VALUES (?, ?, ?)",
+                               (student_id, amount, date))
+
+                cursor.execute("UPDATE students SET fees_paid = fees_paid + ? WHERE id = ?",
+                               (amount, student_id))
+
+                conn.commit()
+                conn.close()
+
+                messagebox.showinfo("Success", "Payment recorded successfully!")
+                pay_win.destroy()
+
+            except ValueError:
+                messagebox.showerror("Input Error", "Invalid amount.")
+            except Exception as e:
+                logging.error(f"Save Payment Error: {e}")
+                messagebox.showerror("Error", "Failed to record payment.")
+
+        tk.Button(pay_win, text="Save Payment", command=save_payment,
+                  bg="silver", fg="blue").pack(pady=10)

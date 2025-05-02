@@ -46,3 +46,16 @@ def initialize_db():
 
         conn.commit()
         conn.close()
+    except Exception as e:
+        logging.error(f"Database Initialization Error: {e}")
+        messagebox.showerror("Database Error", "Failed to initialize the database.")
+
+
+class HostelApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Hostel Management App")
+        self.root.geometry("600x400")
+        self.root.configure(bg="silver")
+
+        self.setup_ui()

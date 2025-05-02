@@ -59,3 +59,17 @@ class HostelApp:
         self.root.configure(bg="silver")
 
         self.setup_ui()
+    def setup_ui(self):
+        tk.Label(self.root, text="HostelApp", font=("Arial", 37),
+                 bg="gold", fg="black").pack(pady=10)
+
+        tk.Button(self.root, text="Add Student", command=self.add_student,
+                  bg="grey", fg="black").pack(pady=12)
+        tk.Button(self.root, text="View Students", command=self.view_students,
+                  bg="grey", fg="black").pack(pady=12)
+        tk.Button(self.root, text="Manage Payments", command=self.manage_payments,
+                  bg="grey", fg="black").pack(pady=12)
+        tk.Button(self.root, text="Remove Student", command=self.remove_student,
+                  bg="grey", fg="black").pack(pady=12)
+        tk.Button(self.root, text="Exit", command=self.root.quit,
+                  bg="red", fg="black").pack(pady=12)

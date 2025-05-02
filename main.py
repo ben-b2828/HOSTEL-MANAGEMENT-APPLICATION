@@ -29,3 +29,20 @@ def initialize_db():
                             room_number TEXT UNIQUE,
                             fees_paid REAL DEFAULT 0.0
                         )''')
+ cursor.execute('''CREATE TABLE IF NOT EXISTS rooms (
+                            room_number TEXT PRIMARY KEY,
+                            capacity INTEGER,
+                            occupied INTEGER DEFAULT 0
+                        )''')
+
+
+        cursor.execute('''CREATE TABLE IF NOT EXISTS payments (
+                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            student_id INTEGER,
+                            amount REAL,
+                            date TEXT,
+                            FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE
+                        )''')
+
+        conn.commit()
+        conn.close()

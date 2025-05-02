@@ -215,3 +215,57 @@ class HostelApp:
 
         tk.Button(pay_win, text="Save Payment", command=save_payment,
                   bg="silver", fg="blue").pack(pady=10)
+    def remove_student(self):
+        remove_win = tk.Toplevel(self.root)
+        remove_win.title("Remove Student")
+        remove_win.geometry("400x200")
+        remove_win.configure(bg="silver")
+
+        tk.Label(remove_win, text="Select Student to Remove:", bg="silver", fg="blue").pack(pady=5)
+
+        student_combo = ttk.Combobox(remove_win, state="readonly")
+        student_combo.pack(pady=5)
+
+        try:
+            conn = connect_db()
+            cursor = conn.cursor()
+            cursor.execute("SELECT id, name, room_number FROM students")
+            students = cursor.fetchall()
+            conn.close()
+            student_combo["values"] = [f"{s[0]} - {s[1]} (Room: {s[2]})" for s in students]
+        except Exception as e:
+            logging.error(f"Remove Student Load Error: {e}")
+            messagebox.showerror("Error", "Failed to load students.")
+            return
+
+        def confirm_removal():
+            selected = student_combo.get()
+            if not selected:
+                messagebox.showerror("Error", "Please select a student to remove.")
+                return
+
+            student_id = int(selected.split(" - ")[0])
+
+            try:
+                conn = connect_db()
+                cursor = conn.cursor()
+
+                cursor.execute("SELECT room_number FROM students WHERE id = ?", (student_id,))
+                result = cursor.fetchone()
+                if result:
+                    room = result[0]
+                    cursor.execute("DELETE FROM students WHERE id = ?", (student_id,))
+                    cursor.execute("UPDATE rooms SET occupied = occupied - 1 WHERE room_number = ?", (room,))
+                    conn.commit()
+                    conn.close()
+                    messagebox.showinfo("Success", "Student removed successfully.")
+                    remove_win.destroy()
+                else:
+                    messagebox.showerror("Error", "Student not found.")
+
+            except Exception as e:
+                logging.error(f"Remove Student Error: {e}")
+                messagebox.showerror("Error", "Failed to remove student.")
+
+        tk.Button(remove_win, text="Remove", command=confirm_removal,
+                  bg="silver", fg="red").pack(pady=10)

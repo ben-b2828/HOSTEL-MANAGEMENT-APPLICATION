@@ -153,3 +153,29 @@ class HostelApp:
         except Exception as e:
             logging.error(f"View Students Error: {e}")
             messagebox.showerror("Error", "Failed to load students.")
+    def manage_payments(self):
+        pay_win = tk.Toplevel(self.root)
+        pay_win.title("Manage Payments")
+        pay_win.geometry("400x300")
+        pay_win.configure(bg="silver")
+
+        tk.Label(pay_win, text="Select Student:", bg="silver", fg="blue").pack()
+
+        student_combo = ttk.Combobox(pay_win, state="readonly")
+        student_combo.pack()
+
+        try:
+            conn = connect_db()
+            cursor = conn.cursor()
+            cursor.execute("SELECT id, name FROM students")
+            students = cursor.fetchall()
+            conn.close()
+            student_combo["values"] = [f"{s[0]} - {s[1]}" for s in students]
+        except Exception as e:
+            logging.error(f"Payment Student Load Error: {e}")
+            messagebox.showerror("Error", "Failed to load students.")
+            return
+
+        tk.Label(pay_win, text="Payment Amount:", bg="silver", fg="blue").pack()
+        amount_entry = tk.Entry(pay_win)
+        amount_entry.pack()

@@ -130,3 +130,26 @@ class HostelApp:
 
         tk.Button(add_win, text="Save", command=save_student,
                   bg="silver", fg="black").pack(pady=10)
+    def view_students(self):
+        view_win = tk.Toplevel(self.root)
+        view_win.title("Student List")
+        view_win.geometry("500x300")
+
+        tree = ttk.Treeview(view_win, columns=("ID", "Name", "Age", "Room", "Fees Paid"), show="headings")
+        tree.heading("ID", text="ID")
+        tree.heading("Name", text="Name")
+        tree.heading("Age", text="Age")
+        tree.heading("Room", text="Room")
+        tree.heading("Fees Paid", text="Fees Paid")
+        tree.pack(fill=tk.BOTH, expand=True)
+
+        try:
+            conn = connect_db()
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM students")
+            for row in cursor.fetchall():
+                tree.insert("", "end", values=row)
+            conn.close()
+        except Exception as e:
+            logging.error(f"View Students Error: {e}")
+            messagebox.showerror("Error", "Failed to load students.")

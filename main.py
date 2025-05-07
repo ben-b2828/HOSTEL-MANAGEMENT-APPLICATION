@@ -29,7 +29,7 @@ def initialize_db():
                             room_number TEXT UNIQUE,
                             fees_paid REAL DEFAULT 0.0
                         )''')
- cursor.execute('''CREATE TABLE IF NOT EXISTS rooms (
+        cursor.execute('''CREATE TABLE IF NOT EXISTS rooms (
                             room_number TEXT PRIMARY KEY,
                             capacity INTEGER,
                             occupied INTEGER DEFAULT 0
